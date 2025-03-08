@@ -3,21 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Résultats de comparaison</title>
+    <title>Comparaison de polycopiés</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .summary {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border-left: 5px solid #2196F3;
+        }
+        .recommendation {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #2196F3;
+        }
+        .page-card {
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .page-header {
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+        }
+        .page-content {
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .identical { background-color: #e8f5e9; }
+        .similar { background-color: #fff8e1; }
+        .different { background-color: #ffebee; }
+        .missing { background-color: #e3f2fd; }
+        .added { color: green; }
+        .removed { color: red; }
+        .diff-line {
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin: 2px 0;
+        }
+        .toggle-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .filters {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Résultats de comparaison</h2>
+    <h1>Résultats de comparaison des polycopiés</h1>
     
-    <h3>DiffLib (Ligne par Ligne)</h3>
-    <pre>{{ difflib_diff }}</pre>
-
-    <h3>DeepDiff (Différences globales)</h3>
-    <pre>{{ deepdiff_diff }}</pre>
-
-    <h3>Fuzzy Matching (Similarité ligne par ligne)</h3>
-    {{ fuzzy_html | safe }}
-
-    <br><br>
-    <a href="/">Revenir au formulaire</a>
+    <div class="summary">
+        <h2>Résumé de l'analyse</h2>
+        <p><strong>Pages totales analysées:</strong> {{ summary.total_pages }}</p>
+        <p><strong>Pages avec différences significatives:</strong> {{ summary.significantly_different_pages }} ({{ summary.percent_different }}%)</p>
+        <p class="recommendation">Recommandation: {{ summary.recommendation }}</p>
+    </div>
+    
+    <div class="filters">
+        <h3>Filtrer les résultats</h3>
+        <label><input type="checkbox" class="filter-checkbox" value="identical" checked> Pages identiques</label>
+        <label><input type="checkbox" class="filter-checkbox" value="similar" checked> Pages avec légères différences</label>
+        <label><input type="checkbox" class="filter-checkbox" value="different" checked> Pages très différentes</label>
+        <label><input type="checkbox" class="filter-checkbox" value="missing" checked> Pages manquantes/ajoutées</label>
+    </div>
+    
+    <div id="results-container">
+        {% for result in results %}
+        <div class="page-card 
+                {% if not result.in_both %}missing
+                {% elif result.similarity > 95 %}identical
+                {% elif result.similarity > 80 %}similar
+                {% else %}different{% endif %}"
+             data-type="{% if not result.in_both %}missing
+                        {% elif result.similarity > 95 %}identical
+                        {% elif result.similarity > 80 %}similar
+                        {% else %}different{% endif %}">
+            <div class="page-header">
+                <h3>Page {{ result.page_num }}</h3>
+                <div>
+                    {% if result.in_both and result.similarity is defined %}
+                    <span>Similarité: {{ result.similarity }}%</span>
+                    {% endif %}
+                    <button class="toggle-btn" onclick="toggleContent(this)">Afficher/Masquer</button>
+                </div>
+            </div>
+            <div class="page-content" style="display: none;">
+                <p><strong>Statut:</strong> {{ result.status }}</p>
+                
+                {% if result.differences %}
+                <h4>Différences détectées:</h4>
+                {% for diff in result.differences %}
+                    <div class="diff-line {% if diff.startswith('+ ') %}added{% elif diff.startswith('- ') %}removed{% endif %}">
+                        {{ diff }}
+                    </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <a href="/" style="display: block; margin-top: 30px; text-align: center; padding: 10px; background: #2196F3; color: white; text-decoration: none; border-radius: 5px;">Comparer d'autres documents</a>
+    
+    <script>
+        function toggleContent(button) {
+            const content = button.closest('.page-header').nextElementSibling;
+            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Filtrage des résultats
+        const checkboxes = document.querySelectorAll('.filter-checkbox');
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateFilters);
+        });
+        
+        function updateFilters() {
+            const activeFilters = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+            
+            document.querySelectorAll('.page-card').forEach(card => {
+                if (activeFilters.includes(card.dataset.type)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>

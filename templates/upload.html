@@ -1,18 +1,109 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comparer deux PDF</title>
-</head>
-<body>
-    <h2>Uploader deux fichiers PDF</h2>
-    <form action="/" method="post" enctype="multipart/form-data">
-        <label for="pdf1">Fichier PDF 1 :</label>
-        <input type="file" name="pdf1" required><br><br>
-        <label for="pdf2">Fichier PDF 2 :</label>
-        <input type="file" name="pdf2" required><br><br>
-        <input type="submit" value="Comparer">
-    </form>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comparer deux polycopiés PDF</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      h1,
+      h2,
+      h3 {
+        color: #2196f3;
+      }
+      .container {
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .file-input {
+        display: block;
+        margin: 10px 0;
+        width: 100%;
+      }
+      button {
+        background: #2196f3;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background: #0b7dda;
+      }
+      .note {
+        background-color: #fff8e1;
+        padding: 10px;
+        border-left: 5px solid #ffc107;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Comparateur de polycopiés médicaux</h1>
+
+    <div class="note">
+      <p>
+        <strong>Informations:</strong> Cet outil analyse deux versions d'un
+        polycopié et met en évidence les différences significatives pour vous
+        aider à déterminer s'il est nécessaire d'acheter la nouvelle version.
+      </p>
+    </div>
+
+    <div class="container">
+      <h2>Télécharger vos fichiers PDF</h2>
+
+      <form action="/" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="pdf1">Version ancienne du polycopié:</label>
+          <input
+            type="file"
+            name="pdf1"
+            id="pdf1"
+            class="file-input"
+            accept="application/pdf"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="pdf2">Nouvelle version du polycopié:</label>
+          <input
+            type="file"
+            name="pdf2"
+            id="pdf2"
+            class="file-input"
+            accept="application/pdf"
+            required
+          />
+        </div>
+
+        <button type="submit">Lancer la comparaison</button>
+      </form>
+    </div>
+
+    <div class="note" style="margin-top: 30px">
+      <p>
+        <strong>Note:</strong> Pour les documents volumineux (500 pages), le
+        traitement peut prendre quelques minutes.
+      </p>
+    </div>
+  </body>
 </html>
