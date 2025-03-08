@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats de comparaison</title>
+</head>
+<body>
+    <h2>Résultats de comparaison</h2>
+    
+    <h3>DiffLib (Ligne par Ligne)</h3>
+    <pre>{{ difflib_diff }}</pre>
+
+    <h3>DeepDiff (Différences globales)</h3>
+    <pre>{{ deepdiff_diff }}</pre>
+
+    <h3>Fuzzy Matching (Similarité ligne par ligne)</h3>
+    {{ fuzzy_html | safe }}
+
+    <br><br>
+    <a href="/">Revenir au formulaire</a>
+</body>
+</html>
